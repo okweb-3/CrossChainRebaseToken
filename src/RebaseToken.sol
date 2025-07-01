@@ -124,4 +124,20 @@ contract RebaseToken is ERC20 {
         linearInterestFactor = PRECISION_FACTOR + fractionalInterest;
         return linearInterestFactor;
     }
+    function _mintAccruedInterest(address _user) internal {
+        //find their current balance of rebase tokens that have been minted to the user -> principle balance
+        uint256 previousPrincipleBalance = super.balanceOf(_user);
+
+        //calculate their  current balance including any interest -> balanceOf
+        uint256 currentBalance = balanceOf(_user);
+
+        //calculate the number of tokens that need to be minted to the user (2)-(1)
+        uint256 balanceIncrease = currentBalance - previousPrincipleBalance;
+
+        s_userLastUpdateTimeStamp[_user] = block.timestamp;
+        _mint(_user, balanceIncrease);
+        if (balanceIncrease > 0) {
+            _mint(_user, balanceIncrease);
+        }
+    }
 }
