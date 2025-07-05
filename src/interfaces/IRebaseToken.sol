@@ -16,4 +16,5 @@ interface IRebaseToken {
     function burn(address _from, uint256 _amount) external;
     //notice : We only include function that the Vault contract will call.
     //Other functions from the actual RebaseToken.sol are not needed here.
+    function balanceOf(address _account) external view returns (uint256);
 }

@@ -65,6 +65,9 @@ contract Vault {
      *@dev Follows Check-Effects-Interactions pattern. Uses low-level .call for ETH transfer.
      */
     function redeem(uint256 _amount) external {
+        if (_amount == type(uint256).max) {
+            _amount = i_rebaseToken.balanceOf(msg.sender); // Set amount to full current balance
+        }
         //1.Effects(State changes occur first)
         //Burn the specified amount of tokens from the caller(msg.sender)
         //The RebaseToken's burn function should handle checks for sufficient balance.
