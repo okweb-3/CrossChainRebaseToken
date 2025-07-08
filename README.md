@@ -51,4 +51,27 @@ https://docs.chain.link/ccip/tutorials/evm/send-arbitrary-data
 
 Delpoy contract on Arbitum Sepolia
 
-![image-20250707232723802](./README.assets/image-20250707232723802.png)
+<img src="./README.assets/image-20250707232723802.png" alt="image-20250707232723802" style="zoom: 33%;" />
+
+https://sepolia-faucet.pk910.de/#/
+
+https://bridge.arbitrum.io/?destinationChain=arbitrum-sepolia&sourceChain=sepolia
+
+
+
+<img src="./README.assets/image-20250708101631434.png" alt="image-20250708101631434" />
+
+<img src="./README.assets/image-20250708102139329.png" alt="image-20250708102139329" />
+
+![image-20250708102848112](./README.assets/image-20250708102848112.png)
+
+https://ccip.chain.link/#/side-drawer/msg/0x5ae0e35aef37f977f22b2866cef28e4304d390a35804fa9bcc6a55a5eeb8510d
+
+<img src="./README.assets/image-20250708152054309.png" alt="image-20250708152054309" style="zoom:50%;" />
+
+## Pool Contract
+
+https://docs.chain.link/ccip/concepts/cross-chain-token/evm/token-pools#standard-token-pools
+
+https://github.com/smartcontractkit/chainlink-ccip/blob/contracts-ccip-release/1.6.0/chains/evm/contracts/pools/TokenPool.sol
+
