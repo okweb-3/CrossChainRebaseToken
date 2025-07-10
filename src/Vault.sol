@@ -13,7 +13,7 @@ contract Vault {
     // -Sends the corresponding amount of ETH back to the user.
     //4.Implement a  mechanism to add ETH rewards to the vault.
 
-    IRebaseToken private immutable i_rebaseToken; //Type will be interface
+    IRebaseToken public immutable i_rebaseToken; //Type will be interface
     event Deposit(address indexed user, uint256 amount);
     event Redeem(address indexed user, uint256 amount);
 
@@ -46,7 +46,11 @@ contract Vault {
         }
 
         //call the mint function on the RebaseToken Contract
-        i_rebaseToken.mint(msg.sender, amountToMint);
+        i_rebaseToken.mint(
+            msg.sender,
+            amountToMint,
+            i_rebaseToken.getInterestRate()
+        );
 
         //Emit an event to log the deposit
         emit Deposit(msg.sender, amountToMint);

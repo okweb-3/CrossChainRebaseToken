@@ -17,26 +17,31 @@ contract RebaseTokenPool is TokenPool {
 
     function lockOrBurn(
         Pool.LockOrBurnInV1 calldata lockOrBurnIn
-    ) external override returns (Pool.LockOrBurnInV1 memory lockOrBurnOut) {
+    )
+        external
+        virtual
+        override
+        returns (Pool.LockOrBurnOutV1 memory lockOrBurnOut)
+    {
         //It performs crucial security and configuration checks
         _validateLockOrBurn(lockOrBurnIn);
 
-        //Decode the original sender's address
-        address originalSender = abi.decode(
-            lockOrBurnIn.originalSender,
-            (address)
-        );
+        // //Decode the original sender's address
+        // address originalSender = abi.decode(
+        //     lockOrBurnIn.originalSender,
+        //     (address)
+        // );
 
         //Fetch the user's current interest rate from the base token
         uint256 userInterestRate = IRebaseToken(address(i_token))
-            .getUserInterestRate(originalSender);
+            .getUserInterestRate(lockOrBurnIn.originalSender);
 
         //Burn the specified amount of tokens from this pool contract
         //CCIP transfers tokens to the pool before lockOrBurn is called
         IRebaseToken(address(i_token)).burn(address(this), lockOrBurnIn.amount);
 
         //Prepare the output data for CCIP
-        lockOrBurnOut = Pool.lockOrBurnOutV1({
+        lockOrBurnOut = Pool.LockOrBurnOutV1({
             destTokenAddress: getRemoteToken(lockOrBurnIn.remoteChainSelector),
             destPoolData: abi.encode(userInterestRate)
         });
@@ -44,7 +49,7 @@ contract RebaseTokenPool is TokenPool {
 
     function releaseOrMint(
         Pool.ReleaseOrMintInV1 calldata releaseOrMintIn
-    ) external returns (Pool.ReleaseOrMintInV1 memory) {
+    ) external returns (Pool.ReleaseOrMintOutV1 memory) {
         _validateReleaseOrMint(releaseOrMintIn);
 
         //Decode the user interest rate sent from the source pool
@@ -53,17 +58,20 @@ contract RebaseTokenPool is TokenPool {
             (uint256)
         );
 
-        //The reciver address directly available
-        address reciver = releaseOrMintIn.reciver;
+        //The receiver  address directly available
+        address receiver = releaseOrMintIn.receiver;
 
         //Mint tokens to the reciver,applying the propageted interest rate
+
         IRebaseToken(address(i_token)).mint(
-            reciver,
-            releaseOrMintIn,
+            receiver,
+            releaseOrMintIn.amount,
             userInterestRate
         );
 
         return
-            Pool.ReleaseOrMintInV1({destinationamount: releaseOrMintIn.amount});
+            Pool.ReleaseOrMintOutV1({
+                destinationAmount: releaseOrMintIn.amount
+            });
     }
 }
