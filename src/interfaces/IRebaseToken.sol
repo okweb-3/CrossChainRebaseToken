@@ -17,4 +17,7 @@ interface IRebaseToken {
     //notice : We only include function that the Vault contract will call.
     //Other functions from the actual RebaseToken.sol are not needed here.
     function balanceOf(address _account) external view returns (uint256);
+    function getUserInterestRate(
+        address _account
+    ) external view returns (uint256);
 }
