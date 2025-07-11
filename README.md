@@ -51,7 +51,7 @@ https://docs.chain.link/ccip/tutorials/evm/send-arbitrary-data
 
 Delpoy contract on Arbitum Sepolia
 
-<img src="./README.assets/image-20250707232723802.png" alt="image-20250707232723802" style="zoom: 33%;" />
+<img src="./README.assets/image-20250707232723802.png" alt="image-20250707232723802" style="zoom: 50%;" />
 
 https://sepolia-faucet.pk910.de/#/
 
@@ -59,11 +59,11 @@ https://bridge.arbitrum.io/?destinationChain=arbitrum-sepolia&sourceChain=sepoli
 
 
 
-<img src="./README.assets/image-20250708101631434.png" alt="image-20250708101631434" />
+<img src="./README.assets/image-20250708101631434.png" alt="image-20250708101631434" style="zoom:50%;" />
 
-<img src="./README.assets/image-20250708102139329.png" alt="image-20250708102139329" />
+<img src="./README.assets/image-20250708102139329.png" alt="image-20250708102139329" style="zoom:50%;" />
 
-![image-20250708102848112](./README.assets/image-20250708102848112.png)
+<img src="./README.assets/image-20250708102848112.png" alt="image-20250708102848112" style="zoom:50%;" />
 
 https://ccip.chain.link/#/side-drawer/msg/0x5ae0e35aef37f977f22b2866cef28e4304d390a35804fa9bcc6a55a5eeb8510d
 
@@ -74,4 +74,40 @@ https://ccip.chain.link/#/side-drawer/msg/0x5ae0e35aef37f977f22b2866cef28e4304d3
 https://docs.chain.link/ccip/concepts/cross-chain-token/evm/token-pools#standard-token-pools
 
 https://github.com/smartcontractkit/chainlink-ccip/blob/contracts-ccip-release/1.6.0/chains/evm/contracts/pools/TokenPool.sol
+
+## Using chainlinklocal
+
+https://docs.chain.link/chainlink-local/build/ccip/foundry
+
+<img src="./README.assets/image-20250711150047805.png" alt="image-20250711150047805" style="zoom:50%;" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
