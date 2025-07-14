@@ -13,9 +13,12 @@ import {TokenAdminRegistry} from "@ccip/contracts/src/v0.8/ccip/tokenAdminRegist
 import {RateLimiter} from "@ccip/contracts/src/v0.8/ccip/libraries/RateLimiter.sol";
 import {TokenPool} from "@ccip/contracts/src/v0.8/ccip/pools/TokenPool.sol";
 import {RateLimiter} from "@ccip/contracts/src/v0.8/ccip/libraries/RateLimiter.sol";
+import {Client} from "@ccip/contracts/src/v0.8/ccip/libraries/Client.sol";
+import {IRouterClient} from "@ccip/contracts/src/v0.8/ccip/interfaces/IRouterClient.sol";
 
 contract CrossChainTest is Test {
     address owner = makeAddr("owner");
+    address user = makeAddr("user");
     uint256 sepoliaFork;
     uint256 arbSepoliaFork;
     CCIPLocalSimulatorFork ccipLocalSimulatorFork;
@@ -106,14 +109,6 @@ contract CrossChainTest is Test {
         address remotePool, //Address of the pool on the remote chain
         address remoteTokenAddress //Address of the token on the remote chain
     ) public {
-        //1.Select the correct fork(local chain context)
-        // struct ChainUpdate {
-        //     uint64 remoteChainSelector; // Remote chain selector
-        //     bytes[] remotePoolAddresses; // Address of the remote pool, ABI encoded in the case of a remote EVM chain.
-        //     bytes remoteTokenAddress; // Address of the remote token, ABI encoded in the case of a remote EVM chain.
-        //     RateLimiter.Config outboundRateLimiterConfig; // Outbound rate limited config, meaning the rate limits for all of the onRamps for the given chain
-        //     RateLimiter.Config inboundRateLimiterConfig; // Inbound rate limited config, meaning the rate limits for all of the offRamps for the given chain
-        //   }
         vm.selectFork(fork);
         vm.prank(owner);
         bytes[] memory remotePoolAddresses = new bytes[](1);
@@ -136,5 +131,63 @@ contract CrossChainTest is Test {
             })
         });
         TokenPool(localPool).applyChainUpdates(new uint64[](0), chainsToAdd);
+    }
+    function bridgeTokens(
+        uint256 amountToBridge,
+        uint256 localFork,
+        uint256 remoteFork,
+        Register.NetworkDetails memory localNetworkDetails,
+        Register.NetworkDetails memory remoteNetworkDetails,
+        RebaseToken localToken,
+        RebaseToken remoteToken
+    ) public {
+        vm.selectFork(localFork);
+
+        Client.EVMTokenAmount[]
+            memory tokenAmounts = new Client.EVMTokenAmount[](1);
+        tokenAmounts[0] = Client.EVMTokenAmount({
+            token: address(localToken),
+            amount: amountToBridge
+        });
+        Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
+            receiver: abi.encode(user),
+            data: "",
+            tokenAmounts: tokenAmounts,
+            feeToken: localNetworkDetails.linkAddress,
+            extraArgs: ""
+        });
+
+        uint256 fee = IRouterClient(localNetworkDetails.routerAddress).getFee(
+            remoteNetworkDetails.chainSelector,
+            message
+        );
+        ccipLocalSimulatorFork.requestLinkFromFaucet(user, fee);
+        vm.prank(user);
+        IERC20(localNetworkDetails.linkAddress).approve(
+            localNetworkDetails.routerAddress,
+            fee
+        );
+        vm.prank(user);
+        IERC20(address(localToken)).approve(
+            localNetworkDetails.routerAddress,
+            amountToBridge
+        );
+        uint256 localBalanceBefore = localToken.balanceOf(user);
+        vm.prank(user);
+        IRouterClient(localNetworkDetails.routerAddress).ccipSend(
+            remoteNetworkDetails.chainSelector,
+            message
+        );
+        uint256 localBalanceAfter = localToken.balanceOf(user);
+        assertEq(localBalanceAfter, localBalanceBefore - amountToBridge);
+        uint256 localUserInterestRate = localToken.getUserInterestRate(user);
+
+        vm.selectFork(remoteFork);
+        vm.warp(block.timestamp + 20 minutes);
+        ccipLocalSimulatorFork.switchChainAndRouteMessage(remoteFork);
+        uint256 remoteBalanceAfter = remoteToken.balanceOf(user);
+        assertEq(remoteBalanceAfter, amountToBridge);
+        uint256 remoteUserInterestRate = remoteToken.getUserInterestRate(user);
+        assertEq(remoteUserInterestRate, localUserInterestRate);
     }
 }
