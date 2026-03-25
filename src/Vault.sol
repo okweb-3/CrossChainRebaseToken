@@ -49,7 +49,7 @@ contract Vault {
         i_rebaseToken.mint(
             msg.sender,
             amountToMint,
-            i_rebaseToken.getInterestRate()
+             i_rebaseToken.getInterestRate()
         );
 
         //Emit an event to log the deposit

@@ -81,9 +81,11 @@ https://docs.chain.link/chainlink-local/build/ccip/foundry
 
 <img src="./README.assets/image-20250711150047805.png" alt="image-20250711150047805" style="zoom:50%;" />
 
+# Note
 
+`vm.Persistent(address)` ensure the simulator's state persists across different test function calls within 
 
-
+确保模拟器的状态在同一个测试合约执行不同函数调之间持续存在，forge test 默认情况下会在每个函数执行时创建一个新的evm状态，意味着一个函数中的所有操作（部署合约，调用函数，状态改变）在下一个函数执行前都会重置，使用`vm.makePersistent()`会告诉foundry 在执行新函数时不要进行重置，该地址上任何状态的改变，都会传递给下一个函数。
 
 
 

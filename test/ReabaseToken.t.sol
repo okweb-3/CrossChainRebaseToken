@@ -173,7 +173,8 @@ contract RebaseTokenTest is Test {
         vm.expectPartialRevert(
             IAccessControl.AccessControlUnauthorizedAccount.selector
         );
-        rebaseToken.mint(user, amount);
+        uint256 interestRate = rebaseToken.getInterestRate();
+        rebaseToken.mint(user, amount,interestRate);
     }
     function testCannotBurnIfNotVault(uint256 amount) public {
         //1.User tries to burn tokens
